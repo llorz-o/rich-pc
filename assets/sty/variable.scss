@@ -1,0 +1,126 @@
+// 主题色
+$root:#5cdbd3;
+$light-root:#e6fffb;
+
+
+// 主色
+$light:#fff;
+$dark:#000;
+
+// 底色
+$bg-root:#f0f3f4;
+$bg-dark:#DCDFE6;
+$bg:#E4E7ED;
+$bg-light:#EBEEF5;
+$bg-bright:#F2F6FC;
+
+// 文字颜色
+$text-dark:#303133;
+$text:#606266;
+$text-light:#909399;
+$text-bright:#C0C4CC;
+
+// 文字大小
+$master-title:20px;
+$title:18px;
+$small-title:16px;
+$base:14px;
+$small-base:13px;
+$aux:12px; // auxiliary
+$min:10px;
+
+// 文字粗细
+$w500:500;
+$w600:600;
+
+// 上下滚动
+@mixin scroll {
+  overflow: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  height: 100%;
+}
+
+// 圆角阴影块
+@mixin circleBlock {
+  background-color: $light;
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 0 2px rgba($color: #000000, $alpha: 0.04);
+}
+
+// 蚀刻文本
+@mixin etched {
+  text-shadow: 0 2px white;
+  font-size: $base;
+  font-weight: bold;
+  color: #b8bec5;
+}
+
+// beauty-scroll
+@mixin beauty-scroll {
+  &::-webkit-scrollbar {
+    width: 2px;
+    height: 12px;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 1px;
+    background: rgba(0, 0, 0, 0.06);
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.08);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 1px;
+    background: rgba(0, 0, 0, 0.12);
+    -webkit-box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+}
+
+
+@mixin beauty-boundary {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  flex: 1;
+
+  >*:nth-child(1) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  &::before {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    content: '';
+    display: block;
+    position: absolute;
+    background: linear-gradient(to top, transparent,
+        rgba(240, 243, 244, 0.1) 20%, rgba(240, 243, 244, 0.39) 40%, #f0f3f4b8 60%, #f0f3f4de 80%, #f0f3f4);
+    z-index: 1;
+  }
+
+  &::after {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    content: '';
+    display: block;
+    position: absolute;
+    background: linear-gradient(to bottom, transparent,
+        rgba(240, 243, 244, 0.1) 20%,
+        rgba(240, 243, 244, 0.39) 40%,
+        #f0f3f4b8 60%,
+        #f0f3f4de 80%, #f0f3f4);
+    z-index: 1;
+  }
+}
