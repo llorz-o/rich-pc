@@ -44,6 +44,7 @@ import Layout from "components/common/Layout";
 import CommentInject from "components/common/CommentInject.vue";
 import { createTime } from "~/utils/dateFomat";
 export default {
+  layout: "article",
   components: {
     CommentItem,
     BreadCrumb,
@@ -52,6 +53,7 @@ export default {
     CommentInject,
     Layout
   },
+  inject: ["root"],
   async asyncData(ctx) {
     let id = ctx.route.params.id;
     if (id) {
@@ -66,7 +68,13 @@ export default {
   methods: {
     onEditUpdate(article) {
       this.article = article;
+    },
+    syncArticleInfo() {
+      this.root.articleInfo = this.article;
     }
+  },
+  mounted() {
+    this.syncArticleInfo();
   },
   filters: {
     lastChange(val) {

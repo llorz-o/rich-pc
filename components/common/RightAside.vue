@@ -7,8 +7,29 @@
             <div class="label">
               留言
             </div>
-            <div class="tabContentBox">
-              12
+            <div class="tabContentBox Messages">
+              <div
+                class="newsMessage"
+                @click="toArticle(item.articleId)"
+                v-for="(item, index) in newsMessages"
+                :key="index"
+              >
+                <div class="newsMessageAvatarBar">
+                  <el-avatar
+                    fit="cover"
+                    :size="35"
+                    :src="item.avatar | img"
+                    class="newsMessageAvatar"
+                  />
+                </div>
+                <div class="newsMessageInfos">
+                  <div class="mewsMessageNick">{{ item.nick }}</div>
+                  <div
+                    class="newsMessageContent __md small"
+                    v-html="item.content"
+                  ></div>
+                </div>
+              </div>
             </div>
           </el-row>
         </el-tab-pane>
@@ -44,8 +65,18 @@ export default {
   computed: {
     tags() {
       return this.$store.state.init.tags;
-    }
-  }
+    },
+    newsMessages() {
+      return this.$store.state.init.newsMessage;
+    },
+  },
+  methods: {
+    toArticle(articleId) {
+      if (this.$route.path.indexOf(articleId) === -1) {
+        this.$router.replace(`/article/${articleId}/`);
+      }
+    },
+  },
 };
 </script>
 
@@ -78,6 +109,37 @@ export default {
     .tabContentBox {
       font-size: $small-base;
       color: $text-light;
+      padding: 0 8px;
+      &.Messages {
+        max-height: 350px;
+        @include scroll;
+        @include beauty-scroll(8);
+      }
+      .newsMessage {
+        display: flex;
+        margin: 15px 0;
+        cursor: pointer;
+        .newsMessageAvatarBar {
+          .newsMessageAvatar {
+            border-radius: 5px;
+            box-shadow: 0 0 4px rgba($color: #000000, $alpha: 0.54);
+            border: 2px solid $bg-bright;
+          }
+        }
+        .newsMessageInfos {
+          padding-left: 10px;
+          flex: 1;
+          .mewsMessageNick {
+            font-size: $aux;
+            color: $text-dark;
+          }
+          .newsMessageContent {
+            font-size: $base;
+            color: $text-light;
+            transform: scale(0.8) translateX(-12.5%) translateY(-12.5%);
+          }
+        }
+      }
     }
   }
 }

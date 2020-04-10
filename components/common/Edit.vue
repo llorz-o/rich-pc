@@ -1,5 +1,5 @@
 <template>
-  <div class="Edit">
+  <div class="Edit" :class="{ popMode, popModeActive, openView }">
     <div class="EditContainer">
       <div class="EditReviewMd __md" v-if="openView" v-html="view">
         <!-- 预览markdown -->
@@ -22,6 +22,9 @@
           v-model="commentNet"
           placeholder="网址(http|https://):"
         />
+        <el-button type="danger" @click="onCancel">
+          {{ comment ? "取消" : "关闭" }}
+        </el-button>
         <el-button type="primary" @click="onView">
           预览Markdown
         </el-button>
@@ -45,7 +48,7 @@ md.image = (herf, title, text) => {
 
 marked.setOptions({
   renderer: md,
-  highlight: function(code) {
+  highlight: function (code) {
     return hljs.highlightAuto(code).value;
   },
   pedantic: false,
@@ -55,11 +58,11 @@ marked.setOptions({
   sanitize: false,
   smartLists: true,
   smartypants: false,
-  xhtml: false
+  xhtml: false,
 });
 export default {
   props: {
-    id: String
+    id: String,
   },
   data() {
     return {
@@ -70,10 +73,20 @@ export default {
 
       commentNick: "",
       commentEmail: "",
-      commentNet: ""
+      commentNet: "",
+
+      popMode: this.layout,
     };
   },
-  inject: ["_d", "_refresh", "_clear"],
+  inject: ["_d", "_refresh", "_clear", "layout", "_parent"],
+  computed: {
+    popModeActive() {
+      if (this._d.messageId) {
+        return true;
+      }
+      return false;
+    },
+  },
   methods: {
     onSend() {
       let verifyMessage = "";
@@ -91,7 +104,7 @@ export default {
           title: "警告",
           message: verifyMessage,
           position: "bottom-right",
-          type: "warning"
+          type: "warning",
         });
         return;
       }
@@ -101,7 +114,7 @@ export default {
         JSON.stringify({
           nick: this.commentNick,
           email: this.commentEmail,
-          net: this.commentNet
+          net: this.commentNet,
         })
       );
 
@@ -116,18 +129,22 @@ export default {
             avatar: "1.jpg", // 提交人头像
             nick: this.commentNick, // 提交人nick
             state: 0,
-            content: this.view
-          }
+            content: this.view,
+          },
         })
-        .then(res => {
+        .then((res) => {
           this.$emit("update", res.data);
-          this.clear();
-          this._clear();
+          this.onCancel();
         });
     },
     onView() {
       this.openView = !this.openView;
       this.view = marked(this.comment);
+    },
+    onCancel() {
+      this._parent.clearRecordingBlockHandle();
+      this._clear();
+      this.clear();
     },
     tab(e) {
       if (e.keyCode == 9) {
@@ -138,7 +155,7 @@ export default {
       this.comment = "";
       this.view = "";
       this.openView = false;
-    }
+    },
   },
   watch: {
     comment(news) {
@@ -152,18 +169,23 @@ export default {
       } else {
         this.placeholder = "你确定不留下点什么?";
       }
-    }
+    },
   },
   mounted() {
     if (window) {
       let { nick, email, net } = JSON.parse(
-        window.localStorage.getItem("userInfo") || ""
+        window.localStorage.getItem("userInfo") || "{}"
       );
       this.commentNick = nick;
       this.commentEmail = email;
       this.commentNet = net;
     }
-  }
+  },
+  created() {
+    if (this.layout === "article") {
+      this.popMode = true;
+    }
+  },
 };
 </script>
 
@@ -175,6 +197,28 @@ export default {
   justify-content: center;
   padding-top: 80px;
   padding-bottom: 50px;
+  &.popMode {
+    padding: 0;
+    height: 304px;
+    .EditContainer {
+      bottom: -100%;
+      position: fixed;
+      transition-duration: 0.3s;
+      transition-property: all;
+      padding: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &.popModeActive .EditContainer {
+      bottom: 0;
+    }
+
+    &.openView {
+      height: 504px;
+    }
+  }
+
   .EditContainer {
     border-radius: 5px;
     overflow: hidden;

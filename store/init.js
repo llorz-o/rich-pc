@@ -1,9 +1,11 @@
 export const state = () => ({
-  tags: []
+  tags: [],
+  newsMessage: []
 })
 
 export const mutations = {
   setInitData(state, data = {}) {
     state.tags = data.tags || []
+    state.newsMessage = data.newsMessage || []
   }
 }

@@ -21,8 +21,8 @@ export default {
   middleware: "init",
   components: {
     LeftAside,
-    RightAside
-  }
+    RightAside,
+  },
 };
 </script>
 

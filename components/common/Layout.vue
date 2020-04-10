@@ -9,6 +9,7 @@
           Main slot
         </slot>
       </el-main>
+      <!-- <div class="auxiliary"></div> -->
     </div>
   </el-container>
 </template>
@@ -16,8 +17,8 @@
 <script>
 export default {
   props: {
-    modifier: String
-  }
+    modifier: String,
+  },
 };
 </script>
 

@@ -1,9 +1,15 @@
 <template>
-  <el-row type="flex" class="CommentItem" v-if="commentData">
+  <el-row
+    type="flex"
+    class="CommentItem"
+    :id="commentData._id"
+    v-if="commentData"
+    ref="masterComment"
+  >
     <el-col :span="1" class="commentAvatar">
       <el-avatar fit="cover" :size="50" :src="commentData.avatar | img" />
     </el-col>
-    <el-col class="commentMain">
+    <el-col :span="22" class="commentMain">
       <el-row>
         <!-- 用户账户信息 -->
         <span class="commentMainNick">
@@ -16,8 +22,9 @@
       <el-row class="commentMainOption">
         <!-- 用户留言信息 时间,点赞,回复按钮 -->
         <span>{{ commentData.date | dateYmdHms }}</span>
-        <span
+        <a
           class="sendTo"
+          :href="`#${commentData._id}`"
           @click="
             onSendTo({
               messageId: commentData._id,
@@ -27,12 +34,14 @@
           "
         >
           回复
-        </span>
+        </a>
       </el-row>
       <el-row
         type="flex"
         align="center"
         class="childrenComment"
+        ref="childrenComment"
+        :id="item._id"
         v-for="(item, index) in commentData.children"
         :key="index"
       >
@@ -51,25 +60,30 @@
                 :
               </span>
             </div>
-            <div class="item childrenCommentContext __md" v-html="item.content">
-              <!-- 留言 -->
-            </div>
+          </el-row>
+          <el-row class="childrenCommentContext __md" v-html="item.content">
+            <!-- 留言 -->
           </el-row>
           <el-row class="childrenCommentOption">
             <!-- 留言信息 -->
             <span>{{ item.date | dateYmdHms }}</span>
-            <span
+            <a
+              :href="`#${item._id}`"
               class="sendTo"
               @click="
-                onSendTo({
-                  id: item._id,
-                  isMaster: false,
-                  messageId: commentData._id,
-                  nick: item.nick
-                })
+                onSendTo(
+                  {
+                    id: item._id,
+                    isMaster: false,
+                    messageId: commentData._id,
+                    nick: item.nick
+                  },
+                  index
+                )
               "
-              >回复</span
             >
+              回复
+            </a>
           </el-row>
         </el-col>
       </el-row>
@@ -83,9 +97,15 @@ export default {
   props: {
     commentData: Object
   },
-  inject: ["_d", "_refresh"],
+  inject: ["_d", "_refresh", "_parent"],
   methods: {
-    onSendTo(data) {
+    onSendTo(data, index) {
+      this._parent.recordingCurrentCommentBlockHandle(
+        index === undefined
+          ? this.$refs.masterComment
+          : this.$refs.childrenComment[index]
+      );
+
       this._refresh(data);
     }
   },
@@ -103,6 +123,7 @@ export default {
 <style lang="scss">
 .CommentItem {
   margin-top: 10px;
+  padding: 5px;
   @mixin nick {
     color: $text-dark;
     font-size: $base;
@@ -140,13 +161,12 @@ export default {
   }
   .childrenComment {
     margin-top: 10px;
-
+    padding: 5px;
     .childrenCommentAvatar {
       width: 20px;
       flex: unset;
       display: flex;
       justify-content: center;
-      align-items: center;
     }
     .childrenCommentMain {
       padding-left: 10px;
@@ -174,10 +194,11 @@ export default {
           align-items: center;
         }
       }
-      .childrenCommentContext {
-        @include context;
-        margin-top: 0;
-      }
+    }
+    .childrenCommentContext {
+      @include context;
+      margin-top: 0;
+      font-size: $small-base;
     }
     .childrenCommentOption {
       @include option;
@@ -186,6 +207,8 @@ export default {
 
   .sendTo {
     cursor: pointer;
+    text-decoration: none;
+    color: $text-light;
   }
 }
 </style>

@@ -46,6 +46,7 @@ module.exports = {
    */
   css: [
     "~assets/sty/reset.scss",
+    "~assets/sty/animation.scss",
     'element-ui/lib/theme-chalk/index.css'
   ],
   /*
