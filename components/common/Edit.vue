@@ -15,7 +15,7 @@
         <el-input
           type="email"
           v-model="commentEmail"
-          placeholder="邮箱:xxx@email.com"
+          placeholder="邮箱(必选)"
         />
         <el-input
           type="url"
@@ -38,7 +38,7 @@
 import marked from "marked";
 import hljs from "highlight.js";
 // import "highlight.js/styles/github.css";
-import "~/assets/sty/highlight-sublime.min.css";
+// import "~/assets/sty/highlight-sublime.min.css";
 
 const md = new marked.Renderer();
 
@@ -48,7 +48,7 @@ md.image = (herf, title, text) => {
 
 marked.setOptions({
   renderer: md,
-  highlight: function (code) {
+  highlight: function(code) {
     return hljs.highlightAuto(code).value;
   },
   pedantic: false,
@@ -58,11 +58,11 @@ marked.setOptions({
   sanitize: false,
   smartLists: true,
   smartypants: false,
-  xhtml: false,
+  xhtml: false
 });
 export default {
   props: {
-    id: String,
+    id: String
   },
   data() {
     return {
@@ -75,17 +75,17 @@ export default {
       commentEmail: "",
       commentNet: "",
 
-      popMode: this.layout,
+      popMode: this.layout
     };
   },
   inject: ["_d", "_refresh", "_clear", "layout", "_parent"],
   computed: {
     popModeActive() {
-      if (this._d.messageId) {
+      if (this._d.messageId || this._d.isMaster) {
         return true;
       }
       return false;
-    },
+    }
   },
   methods: {
     onSend() {
@@ -99,12 +99,16 @@ export default {
         verifyMessage = "请输入回复内容";
       }
 
+      if (this.commentEmail === "") {
+        verifyMessage = "请输入email";
+      }
+
       if (verifyMessage) {
         this.$notify({
           title: "警告",
           message: verifyMessage,
           position: "bottom-right",
-          type: "warning",
+          type: "warning"
         });
         return;
       }
@@ -114,27 +118,49 @@ export default {
         JSON.stringify({
           nick: this.commentNick,
           email: this.commentEmail,
-          net: this.commentNet,
+          net: this.commentNet
         })
       );
 
       this.view = marked(this.comment);
+
       this.$axios
-        .post("/articleComment", {
-          messageId: this._d.messageId,
-          isMaster: this._d.isMaster,
-          nick: this._d.nick,
-          articleId: this.id,
-          message: {
-            avatar: "1.jpg", // 提交人头像
-            nick: this.commentNick, // 提交人nick
-            state: 0,
-            content: this.view,
-          },
+        .get("/avatar", {
+          params: {
+            email: this.commentEmail,
+            s: 45
+          }
         })
-        .then((res) => {
-          this.$emit("update", res.data);
-          this.onCancel();
+        .then(res => {
+          if (res.status === 200) {
+            let { ok, data } = res.data;
+            if (ok) {
+              this.$axios
+                .post("/articleComment", {
+                  isMaster: this._d.isMaster,
+                  message: {
+                    avatar: data, // 提交人头像
+                    nick: this.commentNick, // 提交人nick
+                    state: 0,
+                    content: this.view,
+                    targetNick: this._d.nick,
+                    to: this._d.messageId,
+                    belong: this.id
+                  }
+                })
+                .then(res => {
+                  if (res.status === 200) {
+                    let { ok, data } = res.data;
+                    if (ok) {
+                      this.$emit("update", data);
+                      this.onCancel();
+                    }
+                  }
+                });
+            } else {
+              // fixme 头像接口错误
+            }
+          }
         });
     },
     onView() {
@@ -155,7 +181,7 @@ export default {
       this.comment = "";
       this.view = "";
       this.openView = false;
-    },
+    }
   },
   watch: {
     comment(news) {
@@ -169,7 +195,7 @@ export default {
       } else {
         this.placeholder = "你确定不留下点什么?";
       }
-    },
+    }
   },
   mounted() {
     if (window) {
@@ -185,7 +211,7 @@ export default {
     if (this.layout === "article") {
       this.popMode = true;
     }
-  },
+  }
 };
 </script>
 

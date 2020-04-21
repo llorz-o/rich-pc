@@ -11,8 +11,11 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@toast-ui/editor-plugin-chart": "^1.0.0",
+    "@toast-ui/editor-plugin-code-syntax-highlight": "^1.0.0",
     "@nuxt/types": "^0.6.4",
     "@nuxtjs/axios": "^5.9.5",
+    "@toast-ui/editor": "^2.0.1",
     "cross-env": "^5.2.0",
     "element-ui": "^2.4.11",
     "highlight.js": "^9.18.1",

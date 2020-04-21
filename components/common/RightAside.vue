@@ -3,10 +3,13 @@
     <el-row>
       <el-tabs>
         <el-tab-pane label="留言">
-          <el-row class="rightAsideZone">
+          <template slot="label">
+            <i class="el-icon-chat-line-square"></i>
             <div class="label">
               留言
             </div>
+          </template>
+          <el-row class="rightAsideZone">
             <div class="tabContentBox Messages">
               <div
                 class="newsMessage"
@@ -34,10 +37,13 @@
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="时间线">
-          <el-row class="rightAsideZone">
+          <template slot="label">
+            <i class="el-icon-paperclip"></i>
             <div class="label">
               时间线
             </div>
+          </template>
+          <el-row class="rightAsideZone">
             <div class="tabContentBox">
               12
             </div>
@@ -68,15 +74,15 @@ export default {
     },
     newsMessages() {
       return this.$store.state.init.newsMessage;
-    },
+    }
   },
   methods: {
     toArticle(articleId) {
       if (this.$route.path.indexOf(articleId) === -1) {
         this.$router.replace(`/article/${articleId}/`);
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -101,20 +107,10 @@ export default {
   }
   .rightAsideZone {
     padding: 0 20px;
-    .label {
-      padding-bottom: 10px;
-      font-size: $small-title;
-      color: $text;
-    }
     .tabContentBox {
       font-size: $small-base;
       color: $text-light;
       padding: 0 8px;
-      &.Messages {
-        max-height: 350px;
-        @include scroll;
-        @include beauty-scroll(8);
-      }
       .newsMessage {
         display: flex;
         margin: 15px 0;
@@ -136,7 +132,7 @@ export default {
           .newsMessageContent {
             font-size: $base;
             color: $text-light;
-            transform: scale(0.8) translateX(-12.5%) translateY(-12.5%);
+            // transform: scale(0.8) translateX(-12.5%) translateY(-12.5%);
           }
         }
       }
@@ -156,6 +152,9 @@ export default {
   }
   .el-tabs__item {
     color: $text;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     &:hover {
       color: $text;
     }
@@ -166,6 +165,10 @@ export default {
       text-align: center;
       flex: 1;
       padding: 0;
+    }
+    .label {
+      font-size: $small-base;
+      padding-left: 5px;
     }
   }
 }

@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { createTime } from "~/utils/dateFomat";
+import { createTime } from "~/utils/dateFormat";
 export default {
   props: {
     article: {

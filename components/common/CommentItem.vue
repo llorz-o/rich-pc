@@ -24,7 +24,7 @@
         <span>{{ commentData.date | dateYmdHms }}</span>
         <a
           class="sendTo"
-          :href="`#${commentData._id}`"
+          :href="`#${commentData._id}`" 
           @click="
             onSendTo({
               messageId: commentData._id,
@@ -49,14 +49,14 @@
         <el-col :span="1" class="childrenCommentAvatar">
           <el-avatar fit="cover" :size="20" :src="item.avatar | img" />
         </el-col>
-        <el-col :span="23" class="childrenCommentMain">
+        <el-col :span="22" class="childrenCommentMain">
           <el-row class="childrenCommentInfo">
             <div class="item">
               <!-- 用户信息 -->
               <span class="childrenCommentNick">{{ item.nick }}</span>
-              <span class="childrenCommentTo" v-if="item.to">
+              <span class="childrenCommentTo" v-if="item.targetNick">
                 回复
-                <span class="nick">&nbsp;@{{ item.to }}</span>
+                <span class="nick">&nbsp;@{{ item.targetNick }}</span>
                 :
               </span>
             </div>
@@ -73,7 +73,6 @@
               @click="
                 onSendTo(
                   {
-                    id: item._id,
                     isMaster: false,
                     messageId: commentData._id,
                     nick: item.nick
@@ -92,7 +91,7 @@
 </template>
 
 <script>
-import { createTime } from "~/utils/dateFomat";
+import { createTime } from "~/utils/dateFormat";
 export default {
   props: {
     commentData: Object
@@ -107,6 +106,8 @@ export default {
       );
 
       this._refresh(data);
+
+      this.$emit("send-comment");
     }
   },
   filters: {

@@ -16,18 +16,33 @@
       />
     </template>
     <!-- toTop -->
-    <div class="articleContent" v-html="article.content"></div>
+    <div class="articleContent" id="articleContent"></div>
     <div class="articleFooter">
-      <i class="el-icon-time"></i>
-      <span> 最后修改：{{ article.lastChangeDate | lastChange }}</span>
+      <div class="footerLeft">
+        <i class="el-icon-time"></i>
+        <span> 最后修改：{{ article.lastChangeDate | lastChange }}</span>
+      </div>
+      <div class="footerRight">
+        <el-button
+          @click="
+            $refs.commentInject.refresh({
+              isMaster: true,
+              messageId: article._id
+            })
+          "
+        >
+          留言
+        </el-button>
+      </div>
     </div>
     <div class="commentTitle">{{ article.messageCount }} 条评论</div>
-    <CommentInject>
+    <CommentInject ref="commentInject">
       <div class="articleCommentList">
         <CommentItem
           v-for="(item, index) in article.messageList"
           :key="index"
           :comment-data="item"
+          @send-comment="sendComment(index)"
         />
       </div>
       <Edit :id="article._id" @update="onEditUpdate" />
@@ -36,13 +51,21 @@
 </template>
 
 <script>
+// fixme 留言有bug,当点击回复某人,然后点击回复文章时,目标人并未清空
+import "@toast-ui/editor/dist/toastui-editor-viewer.css";
+import "codemirror/lib/codemirror.css";
+import "highlight.js/styles/github.css";
+import "@toast-ui/editor/dist/toastui-editor.css";
+import "tui-chart/dist/tui-chart.css";
+
 import CommentItem from "components/common/CommentItem.vue";
 import BreadCrumb from "components/common/BreadCrumb.vue";
 import ArticleBaseInfo from "components/common/ArticleBaseInfo.vue";
 import Edit from "components/common/Edit.vue";
 import Layout from "components/common/Layout";
 import CommentInject from "components/common/CommentInject.vue";
-import { createTime } from "~/utils/dateFomat";
+import { createTime } from "~/utils/dateFormat";
+let viewer;
 export default {
   layout: "article",
   components: {
@@ -65,16 +88,62 @@ export default {
       ctx.redirect("/404");
     }
   },
+  data() {
+    return {
+      masterIdx: null
+    };
+  },
   methods: {
+    sendComment(masterIdx) {
+      this.masterIdx = masterIdx;
+    },
     onEditUpdate(article) {
-      this.article = article;
+      if (this.masterIdx !== null) {
+        let comment = this.article.messageList[this.masterIdx];
+        comment.children.push(article);
+        this.$set(this.article.messageList, this.masterIdx, comment);
+      } else {
+        this.article.messageList.unshift(article);
+        this.article.messageCount += 1;
+      }
+      this.masterIdx = null;
     },
     syncArticleInfo() {
       this.root.articleInfo = this.article;
     }
   },
   mounted() {
+    const chartPromise = import("@toast-ui/editor-plugin-chart");
+    const hljsPromise = import("highlight.js");
+    const codeSyntaxHightlightPromise = import(
+      "@toast-ui/editor-plugin-code-syntax-highlight"
+    );
+    const ViewerPromise = import("@toast-ui/editor/dist/toastui-editor-viewer");
+    let initViewer = async () => {
+      let chart = (await chartPromise).default;
+      let hljs = (await hljsPromise).default;
+      let codeSyntaxHightlight = (await codeSyntaxHightlightPromise).default;
+      let Viewer = (await ViewerPromise).default;
+      viewer = new Viewer({
+        el: window.document.querySelector("#articleContent"),
+        viewer: true,
+        initialValue: this.article.content,
+        plugins: [
+          [codeSyntaxHightlight, { hljs }],
+          [
+            chart,
+            {
+              height: 300,
+              width: 700,
+              minWidth: 200,
+              minHeight: 200
+            }
+          ]
+        ]
+      });
+    };
     this.syncArticleInfo();
+    initViewer();
   },
   filters: {
     lastChange(val) {
@@ -109,6 +178,9 @@ export default {
     margin-top: 10px;
   }
   .articleFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 10px 0;
     @include etched;
     font-size: $min;

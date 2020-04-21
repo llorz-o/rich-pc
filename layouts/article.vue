@@ -18,8 +18,8 @@
       </el-container>
     </el-container>
     <el-backtop class="reset-el-top" target=".RightMain">
-      <div class="backUp">
-        backUp
+      <div class="backTop">
+        backTop
       </div>
     </el-backtop>
   </el-container>
@@ -89,6 +89,7 @@ export default {
     }
     .el-container {
       height: fit-content;
+      height: 100%;
       > * {
         flex-shrink: 0;
       }
@@ -107,21 +108,12 @@ export default {
         all: unset;
         height: unset;
         display: unset;
-        .boundary {
-          position: unset;
-          height: unset;
+        .LayoutMain {
+          position: relative;
+          overflow-x: hidden;
+          overflow-y: unset;
           flex-shrink: 0;
-          &::after,
-          &::before {
-            display: none;
-          }
-          .LayoutMain {
-            position: relative;
-            overflow-x: hidden;
-            overflow-y: unset;
-            flex-shrink: 0;
-            padding-right: 20px;
-          }
+          padding-right: 20px;
         }
       }
     }
@@ -145,7 +137,7 @@ export default {
     height: initial;
     border-radius: initial;
     box-shadow: unset;
-    .backUp {
+    .backTop {
       padding: 10px;
       border-radius: 5px;
       box-shadow: 0 0 4px rgba($color: #000000, $alpha: 0.15);

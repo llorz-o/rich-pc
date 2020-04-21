@@ -27,10 +27,13 @@ module.exports = {
       rel: 'icon',
       type: 'image/x-icon',
       href: '/favicon.ico'
+    }, {
+      rel: "stylesheet",
+      type: "text/css",
+      href: "/sty/markdown.css"
     }],
-    script: [{
-      src: "/js/xeditor.min.js"
-    }]
+
+    script: []
   },
   /*
    ** Customize the progress-bar color
@@ -50,7 +53,7 @@ module.exports = {
     'element-ui/lib/theme-chalk/index.css'
   ],
   /*
-   ** Plugins to load before mounting the App
+   ** Plugins to load before mounting the Appls
    */
   plugins: [
     '@/plugins/element-ui',

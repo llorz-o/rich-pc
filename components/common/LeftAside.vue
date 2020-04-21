@@ -3,7 +3,7 @@
     <div class="userInfoBox"></div>
     <el-col>
       <el-menu
-        default-active="/"
+        :default-active="dftActive"
         router
         text-color="#909399"
         active-text-color="#5cdbd3"
@@ -12,10 +12,10 @@
           <i class="el-icon-s-home"></i>
           <span slot="title">首页</span>
         </el-menu-item>
-        <el-menu-item index="/hub">
+        <!-- <el-menu-item index="/hub">
           <i class="el-icon-box"></i>
           <span slot="title">仓库</span>
-        </el-menu-item>
+        </el-menu-item> -->
         <el-menu-item index="/archives">
           <i class="el-icon-files"></i>
           <span slot="title">归档</span>
@@ -30,7 +30,14 @@
 </template>
 
 <script lang="ts">
-export default {};
+export default {
+  props: {
+    dftActive: {
+      type: String,
+      default: "/"
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>

@@ -14,30 +14,37 @@ export default {
     };
   },
   provide() {
-    this._state = Vue.observable({
+    let _state = Vue.observable({
       messageId: "", // 消息 id
-      isMaster: true, // 当前回复的是否是楼主
+      isMaster: false, // 当前回复的是否是楼主
       nick: "" // 目标人nick
     });
 
+    this.$on("refresh", ({ isMaster, messageId, nick }) => {
+      _state.isMaster = isMaster;
+      _state.messageId = messageId;
+      _state.nick = nick;
+    });
+
+    this.$on("clear", () => {
+      _state.isMaster = false;
+      _state.messageId = "";
+      _state.nick = "";
+    });
+
     return {
-      _d: this._state,
+      _d: _state,
       _refresh: this.refresh,
       _clear: this.clear,
       _parent: this // 当前组件
     };
   },
   methods: {
-    refresh({ isMaster, messageId, nick }) {
-      this._state.isMaster = isMaster;
-      this._state.messageId = messageId;
-
-      this._state.nick = nick;
+    refresh(arg) {
+      this.$emit("refresh", arg);
     },
     clear() {
-      this._state.isMaster = true;
-      this._state.messageId = "";
-      this._state.nick = "";
+      this.$emit("clear");
     },
     recordingCurrentCommentBlockHandle(handle) {
       if (handle instanceof Vue) {
@@ -49,7 +56,9 @@ export default {
       }
     },
     clearRecordingBlockHandle() {
-      this.currentCommentBlock.classList.remove(COMMENT_ACTIVE_CLASS);
+      if (this.currentCommentBlock) {
+        this.currentCommentBlock.classList.remove(COMMENT_ACTIVE_CLASS);
+      }
       this.currentCommentBlock = null;
     }
   }

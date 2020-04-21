@@ -1,24 +1,33 @@
 <template>
-  <el-container class="LayoutContainer" :class="[`page-${modifier}-root`]">
+  <el-container
+    class="LayoutContainer"
+    :class="[modifierClass]"
+    :id="modifierClass"
+  >
     <el-header class="LayoutHeader">
       <slot name="header"></slot>
     </el-header>
-    <div class="boundary">
-      <el-main class="LayoutMain">
-        <slot>
-          Main slot
-        </slot>
-      </el-main>
-      <!-- <div class="auxiliary"></div> -->
-    </div>
+    <el-main class="LayoutMain">
+      <slot>
+        Main slot
+      </slot>
+    </el-main>
   </el-container>
 </template>
 
 <script>
 export default {
   props: {
-    modifier: String,
+    modifier: String
   },
+  computed: {
+    modifierClass() {
+      if (this.modifier !== undefined) {
+        return `page-${this.modifier}-root`;
+      }
+      return "";
+    }
+  }
 };
 </script>
 
@@ -28,16 +37,9 @@ export default {
     height: unset !important;
     padding: 0;
   }
-  .boundary {
-    margin: 10px 0;
-    @include beauty-boundary;
-    .LayoutMain {
-      padding-top: 0;
-      padding-bottom: 0;
-      @include scroll;
-      @include beauty-scroll;
-      overflow-y: scroll;
-    }
+  .LayoutMain {
+    padding-top: 0;
+    padding-bottom: 0;
   }
 }
 </style>

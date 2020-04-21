@@ -28,7 +28,7 @@
 
 <script>
 export default {
-  inject: ["layout", "root"],
+  inject: ["root"],
   data() {
     return {
       showLogo: false,
@@ -72,6 +72,7 @@ export default {
 
 <style lang="scss">
 .HeaderComponent {
+  background-color: $light;
   display: flex;
   height: 40px;
   .headerLogoContaienr {
