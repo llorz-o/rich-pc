@@ -56,8 +56,8 @@
       <div class="label">标签</div>
       <div class="tagBox">
         <template v-for="(item, index) in tags">
-          <el-tag @click="$router.push(`/tag/${item.tagName}`)" :key="index">
-            {{ item.tagName }}
+          <el-tag @click="$router.push(`/tag/${item._id}`)" :key="index">
+            {{ item._id }}
           </el-tag>
           &nbsp;
         </template>

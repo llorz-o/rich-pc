@@ -121,6 +121,7 @@ export default {
               .then(res => {
                 let { ok, data } = res.data;
                 if (ok) {
+                  this.message = "";
                   this.messageList.unshift(data);
                 } else {
                   // fixme 留言失败

@@ -5,40 +5,15 @@
       :article="item"
       :key="index"
     />
-    <!-- <nuxt-link
-      v-for="(item, index) in articles"
-      :key="index"
-      :to="`/article/${item._id}`"
-      class="articleCard"
-    >
-      <div class="articleCardTop">
-        <el-row class="articleCardTitle">
-          {{ item.title }}
-        </el-row>
-        <el-row class="articleCardDesc">
-          {{ item.desc }}
-        </el-row>
-      </div>
-      <div class="articleCardBottom">
-        <ArticleBaseInfo
-          :article="{
-            auth: item.auth,
-            date: item.date,
-            messageCount: item.messageCount,
-            tags: item.tags
-          }"
-        />
-      </div>
-    </nuxt-link> -->
   </div>
 </template>
 
 <script>
-import ArticleCard from "components/common/ArticleCard";
+import ArticleCard from "components/common/ArticleCard/ArticleCard.vue";
 export default {
   components: { ArticleCard },
   async asyncData({ $axios }) {
-    let { data } = await $axios.get("/getArtivle");
+    let { data } = await $axios.get("/home");
     return {
       articles: data
     };

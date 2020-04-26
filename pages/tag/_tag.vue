@@ -1,14 +1,21 @@
 <template>
   <Layout modifier="tag">
     <template slot="header">
-      <el-button class="articleTag" v-for="(item, index) in tags" :key="index">
-        <span>{{ item.tagName }}</span>
-        <span class="tagCount" v-if="item.tagCount">{{ item.tagCount }}</span>
+      <el-button
+        class="articleTag"
+        v-for="(item, index) in tags"
+        :key="index"
+        @click="$router.replace(`/tag/${item._id}`)"
+      >
+        <span>{{ item._id }}</span>
+        <span class="tagCount" v-if="item.count !== undefined">{{
+          item.count
+        }}</span>
       </el-button>
     </template>
     <ArticleCard
-      v-for="(item, index) in tagData.tagList"
-      :article="item"
+      v-for="(item, index) in tagData.tagArticleList"
+      :article="item.article"
       :key="index"
     />
   </Layout>
@@ -16,7 +23,7 @@
 
 <script>
 import { CheckboxButton } from "element-ui";
-import ArticleCard from "components/common/ArticleCard";
+import ArticleCard from "components/common/ArticleCard/ArticleCard";
 import Layout from "components/common/Layout";
 
 export default {
@@ -30,7 +37,7 @@ export default {
     let { data } = await ctx.$axios.get(`/tags/${tag}`);
     if (data) {
       return {
-        tagData: data
+        tagData: data.data
       };
     } else {
       ctx.redirect("/404");
